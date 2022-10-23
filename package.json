@@ -1,0 +1,26 @@
+{
+  "name": "nodejsapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon api.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "~1.20.0",
+    "cors": "2.8.5",
+    "encode-utf8": "^2.0.0",
+    "express": "~4.18.1",
+    "mssql": "^6.2.1",
+    "python-shell": "^3.0.1",
+    "turkish-char-encoding": "^0.0.5",
+    "utf8": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "keywords": [],
+  "author": "hozdemir214@posta.pau.edu.tr",
+  "license": "ISC"
+}
