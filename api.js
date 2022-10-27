@@ -14,26 +14,27 @@ app.use(bodyParser.urlencoded({ extends: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/api", router);
-app.use("/imagesBook", express.static("imagesBook"));
+app.use("/api/imagesBook", express.static("imagesBook"));
 
 router.use((request, response, next) => {
   console.log("middleware");
   next();
 });
 
-router.route("/books").get((request, response) => {
-  dboperations.getBooks().then((result) => {
+router.route("/book").get((request, response) => {
+  console.log(request.query.last);
+  dboperations.getBooks(request.query.last).then((result) => {
     //console.log(result);
     response.json(result[0]);
   });
 });
-router.route("/books/:id").get((request, response) => {
+router.route("/book/:id").get((request, response) => {
   dboperations.getBook(request.params.id).then((result) => {
     //console.log(result);
     response.json(result[0]);
   });
 });
-router.route("/books").post((request, response) => {
+router.route("/book").post((request, response) => {
   let book = { ...request.body };
 
   dboperations.postAddBook(book).then((result) => {
