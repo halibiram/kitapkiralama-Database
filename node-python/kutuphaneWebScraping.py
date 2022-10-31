@@ -1,4 +1,5 @@
 from base64 import decode
+from distutils.log import error
 import requests
 from bs4 import BeautifulSoup
 import urllib.request
@@ -31,7 +32,7 @@ def basla(info):
     
     info=checkInfo(info)
     
-    url='http://85.99.108.162/yordam/sayfa/detay.php?dil=0&demirbas=001'+info+'&kiosk=0&q=*&tip=&webYayin=%2Fyordam'
+    url='http://85.99.108.162/yordam/sayfa/detay.php?dil=0&demirbas=000'+info+'&kiosk=0&q=*&tip=&webYayin=%2Fyordam'
     res=requests.get(url)
         
        
@@ -59,65 +60,68 @@ def basla(info):
 
 
 
-    for imgtag in soup_data.find_all("img",{'class':'img-fluid'}): #img taginda resmi url bulma
-    #   print(imgtag['src'])
-        image_url =imgtag['src']
-
-    
-
-    
-
-    if(len(image_url)==0):
-        basla(str(int(info)+1))
+ 
     
         
     #resimi kayit etme
-   
-    fileName =createRandomName()+".jpg"
-    filePath ='./imagesBook/'
-    imageName =os.path.join(filePath,fileName)
     try:
+        for imgtag in soup_data.find_all("img",{'class':'img-fluid'}): #img taginda resmi url bulma
+    #   print(imgtag['src'])
+            image_url =imgtag['src']
+
+    
+
+    
+
+        
+        fileName =createRandomName()+".jpg"
+        filePath ='./bookImages/'
+        imageName =os.path.join(filePath,fileName)
+    
         urllib.request.urlretrieve(image_url,imageName)
+        bookInfo.append({"image_path":imageName})
+        #kitap bilgileri ayiklama
+        for i in titles:
+            Eser=i.text;
+
+        ##print(Eser)
+        for find in findWord:
+            try:
+                wordIndex.append(Eser.index(find))
+                
+                if(Eser.index(find)):
+                    newFindWord.append(find)
+            except:
+                
+                bookInfo.append({find:'yok'})
+
+
+        for index in range(len(wordIndex)-1):
+
+            word=Eser[wordIndex[index]:wordIndex[index+1]]
+
+            # print(newFindWord[index],word.replace(newFindWord[index],''))
+            key=newFindWord[index].replace(' ','_').replace('ı','i').lower()
+            bookInfo.append({key:word.replace(newFindWord[index],'')})
+
+            # words.append(word.replace(newFindWord[index],''))
+
+
+        for i in soup_data.find_all("td", {"data-alan": '_konu'}):
+            konular=i.getText('--')
+            
+            bookInfo.append({'konular': konular[0:len(konular)-3] })
+        return bookInfo
     except:
-        basla(str(int(info)+1))
+        return error
+        
 
 
     
 
-    bookInfo.append({"image_path":imageName})
+    
 
-    #kitap bilgileri ayiklama
-    for i in titles:
-        Eser=i.text;
-
-    ##print(Eser)
-    for find in findWord:
-        try:
-            wordIndex.append(Eser.index(find))
-            
-            if(Eser.index(find)):
-                newFindWord.append(find)
-        except:
-            
-            bookInfo.append({find:'yok'})
-
-
-    for index in range(len(wordIndex)-1):
-
-        word=Eser[wordIndex[index]:wordIndex[index+1]]
-
-        # print(newFindWord[index],word.replace(newFindWord[index],''))
-        key=newFindWord[index].replace(' ','_').replace('ı','i').lower()
-        bookInfo.append({key:word.replace(newFindWord[index],'')})
-
-        # words.append(word.replace(newFindWord[index],''))
-
-
-    for i in soup_data.find_all("td", {"data-alan": '_konu'}):
-        konular=i.getText('--')
-        
-        bookInfo.append({'konular': konular[0:len(konular)-3] })
-    return bookInfo
+    
 bookInfo=basla(sys.argv[1])
 for info in bookInfo:
     for key,value in info.items():

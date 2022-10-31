@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extends: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/api", router);
-app.use("/api/imagesBook", express.static("imagesBook"));
+app.use("/api/bookImages", express.static("bookImages"));
 
 router.use((request, response, next) => {
   console.log("middleware");
