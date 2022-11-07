@@ -28,6 +28,13 @@ router.route("/book").get((request, response) => {
     response.json(result[0]);
   });
 });
+router.route("/").get((request, response) => {
+  console.log("gelen sorgu " + request.query.search);
+  dboperations.getSearch(request.query.search).then((result) => {
+    //console.log(result);
+    response.json(result[0]);
+  });
+});
 router.route("/book/:id").get((request, response) => {
   dboperations.getBook(request.params.id).then((result) => {
     //console.log(result);
@@ -45,7 +52,40 @@ router.route("/book").post((request, response) => {
     console.log(result);
   });
 });
+router.route("/login").post((request, response) => {
+  const user = { ...request.body };
+  dboperations.login(user).then((result) => {
+    console.log(result[0][0]);
+    if (result[0][0].statusCode == 404) {
+      response
+        .status(404)
 
-var port = process.env.Port || 8090;
+        // .json({ status: 404 })
+        .send({ error: "Eposta veya kullanici adi hatali!" });
+    } else if (result[0][0].statusCode == 401) {
+      response.status(401).json({ error: "Girilen sifre hatali" });
+    } else if (result[0][0].statusCode == 200) {
+      response.status(200).json(result[0][0]);
+    }
+  });
+});
+router.route("/register").post((request, response) => {
+  const newuser = { ...request.body };
+  console.log(newuser);
+  dboperations.register(newuser).then((result) => {
+    console.log(result);
+    response.status(200).json(result[0][0]);
+  });
+});
+router.route("/mybook").post((request, response) => {
+  const data = { ...request.body };
+  console.log(data);
+  dboperations.postMyBook(data).then((result) => {
+    console.log(result);
+    response.status(200).json(result[0]);
+  });
+});
+
+var port = process.env.Port || 8091;
 app.listen(port);
-console.log("Order API is running at " + port);
+console.log("Your API is running at " + port);
