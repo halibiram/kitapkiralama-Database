@@ -4,10 +4,10 @@ const sql = require("mssql");
 
 const dboperations = require("../routers/dbOperationRouter");
 
-let bookInfo = {};
+const bookInfo = {};
 
 function webScraing(info) {
-  let options = {
+  const options = {
     scriptPath: "./node-python",
     encoding: "utf8",
     args: [info],
@@ -17,8 +17,7 @@ function webScraing(info) {
     options,
     async function (err, res) {
       if (err) {
-        console.log(err);
-        console.log("hata olustu! Tekrak deneniyor");
+        console.log("Hatali olustu, diger linke geciliyor");
         webScraing(info + 1);
       }
 
@@ -29,9 +28,9 @@ function webScraing(info) {
         }
 
         console.log(bookInfo);
-        // let add_author = await addAuthor(bookInfo.yazar).then(await function(res) {authorId=res[0].yazarno});
-        // let add_category=await addCategory(bookInfo.konular).then(await function(res) {categoryIds=res});
-        // let add_publisherName =await addPublisher(bookInfo.yayinlayan).then(await function(result) {
+        // const add_author = await addAuthor(bookInfo.yazar).then(await function(res) {authorId=res[0].yazarno});
+        // const add_category=await addCategory(bookInfo.konular).then(await function(res) {categoryIds=res});
+        // const add_publisherName =await addPublisher(bookInfo.yayinlayan).then(await function(result) {
         //     PublisherId=result[0].yayineviNo;
 
         // })
@@ -47,22 +46,22 @@ function webScraing(info) {
   );
 }
 async function addBook(bookInfo, info) {
-  let add_author = await addAuthor(bookInfo.yazar).then(
+  const add_author = await addAuthor(bookInfo.yazar).then(
     await function (res) {
       authorId = res[0].yazarno;
     }
   );
-  let add_category = await addCategory(bookInfo.konular).then(
+  const add_category = await addCategory(bookInfo.konular).then(
     await function (res) {
       categoryIds = res;
     }
   );
-  let add_publisherName = await addPublisher(bookInfo.yayinlayan).then(
+  const add_publisherName = await addPublisher(bookInfo.yayinlayan).then(
     await function (result) {
       PublisherId = result[0].yayineviNo;
     }
   );
-  let lastaddBooks = [];
+  const lastaddBooks = [];
   function delayAFn(ms) {
     return new Promise((resolve) =>
       setTimeout(() => {
@@ -73,12 +72,12 @@ async function addBook(bookInfo, info) {
   try {
     console.log(categoryIds.length);
 
-    let pool = await sql.connect(config);
+    const pool = await sql.connect(config);
 
     //await delayAFn(2000);
     console.log("2 second resume");
 
-    let insertBook = await pool
+    const insertBook = await pool
       .request()
       .input("kitapAdi", sql.NVarChar, bookInfo.eser_adi)
       .input("yazarNo", sql.Int, authorId)
@@ -90,12 +89,12 @@ async function addBook(bookInfo, info) {
       .query(
         "insert into kitaplar(adi,yazarno,yayinTarihi,yayinevino,kapakresmi,stok) values(@kitapAdi,@yazarNo,@yayinTarihi,@yayineviNo,@kapakresmi,@stok)"
       );
-    let lastaddBook = await pool
+    const lastaddBook = await pool
       .request()
       .query("select top(1) kitapNo from kitaplar order by kitapNo desc");
     console.log(lastaddBook.recordset);
     console.log(categoryIds);
-    let lastbook = lastaddBook.recordset;
+    const lastbook = lastaddBook.recordset;
     let insertbookCategory;
     for (i = 0; i <= categoryIds.length - 1; i++) {
       insertbookCategory = await pool
@@ -119,9 +118,9 @@ async function addBook(bookInfo, info) {
 }
 async function addAuthor(authorName) {
   try {
-    let author = authorName.split(",");
-    let pool = await sql.connect(config);
-    let insertBook = await pool
+    const author = authorName.split(",");
+    const pool = await sql.connect(config);
+    const insertBook = await pool
       .request()
       .input("name", sql.NVarChar, author[1])
       .input("surname", sql.NVarChar, author[0])
@@ -134,12 +133,12 @@ async function addAuthor(authorName) {
 }
 async function addCategory(categoryName) {
   try {
-    let categoryIds = [];
-    let category = categoryName.split("--");
-    let pool = await sql.connect(config);
+    const categoryIds = [];
+    const category = categoryName.split("--");
+    const pool = await sql.connect(config);
 
     for (num = 0; num < category.length; num++) {
-      let insertCategory = await pool
+      const insertCategory = await pool
         .request()
         .input("categoryName", sql.NVarChar, category[num])
         .query("exec spAddCategory @categoryName");
@@ -153,8 +152,8 @@ async function addCategory(categoryName) {
 }
 async function addPublisher(publisherName) {
   try {
-    let pool = await sql.connect(config);
-    let insertPublisher = await pool
+    const pool = await sql.connect(config);
+    const insertPublisher = await pool
       .request()
       .input("publisherName", sql.NVarChar, publisherName)
       .query("exec spAddPublisher @publisherName");
