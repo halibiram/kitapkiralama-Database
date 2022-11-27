@@ -35,7 +35,7 @@ router.route("/").get((request, response) => {
     response.json(result[0]);
   });
 });
-router.route("/book/:id").get((request, response) => {
+router.route("/books/:id").get((request, response) => {
   dboperations.getBook(request.params.id).then((result) => {
     //console.log(result);
     response.json(result[0]);
@@ -83,6 +83,14 @@ router.route("/mybook").post((request, response) => {
   dboperations.postMyBook(data).then((result) => {
     console.log(result);
     response.status(200).json(result[0]);
+  });
+});
+router.route("/rentbook").post((req, res) => {
+  const data = { ...req.body };
+  console.log(data);
+  dboperations.postRentBook(data).then((result) => {
+    console.log(result[0][0]);
+    res.status(201).json(result[0]);
   });
 });
 

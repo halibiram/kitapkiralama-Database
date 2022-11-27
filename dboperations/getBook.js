@@ -7,7 +7,7 @@ async function getBook(bookId) {
     let products = await pool
       .request()
       .input("input_parameter", sql.Int, bookId)
-      .query("Select * from kitaplar where kitapno = @input_parameter");
+      .query("spGetBookInfo @input_parameter");
 
     return products.recordsets;
   } catch (error) {

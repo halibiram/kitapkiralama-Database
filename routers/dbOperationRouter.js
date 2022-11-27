@@ -7,6 +7,7 @@ const getSearch = require("../dboperations/getSearch");
 const login = require("../dboperations/login");
 const register = require("../dboperations/register");
 const postMyBook = require("../dboperations/postMyBook");
+const postRentBook = require("../dboperations/postRentBook");
 
 module.exports = {
   getBooks: getBooks.getBooks,
@@ -18,4 +19,5 @@ module.exports = {
   login: login.login,
   register: register.register,
   postMyBook: postMyBook.postMyBook,
+  postRentBook: postRentBook.postRentBook,
 };
