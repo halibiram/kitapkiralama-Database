@@ -12,38 +12,34 @@ function webScraing(info) {
     encoding: "utf8",
     args: [info],
   };
-  PythonShell.run(
-    "kutuphaneWebScraping.py",
-    options,
-    async function (err, res) {
-      if (err) {
-        console.log("Hatali olustu, diger linke geciliyor");
+  PythonShell.run("WebScraping.py", options, async function (err, res) {
+    if (err) {
+      console.log("Hatali olustu, diger linke geciliyor");
+      webScraing(info + 1);
+    }
+
+    if (res) {
+      console.log(res.length);
+      for (i = 0; i < res.length; i = i + 2) {
+        bookInfo[res[i]] = res[i + 1];
+      }
+
+      console.log(bookInfo);
+      // const add_author = await addAuthor(bookInfo.yazar).then(await function(res) {authorId=res[0].yazarno});
+      // const add_category=await addCategory(bookInfo.konular).then(await function(res) {categoryIds=res});
+      // const add_publisherName =await addPublisher(bookInfo.yayinlayan).then(await function(result) {
+      //     PublisherId=result[0].yayineviNo;
+
+      // })
+
+      try {
+        await addBook(bookInfo, info);
+      } catch (error) {
+        console.log(error);
         webScraing(info + 1);
       }
-
-      if (res) {
-        console.log(res.length);
-        for (i = 0; i < res.length; i = i + 2) {
-          bookInfo[res[i]] = res[i + 1];
-        }
-
-        console.log(bookInfo);
-        // const add_author = await addAuthor(bookInfo.yazar).then(await function(res) {authorId=res[0].yazarno});
-        // const add_category=await addCategory(bookInfo.konular).then(await function(res) {categoryIds=res});
-        // const add_publisherName =await addPublisher(bookInfo.yayinlayan).then(await function(result) {
-        //     PublisherId=result[0].yayineviNo;
-
-        // })
-
-        try {
-          await addBook(bookInfo, info);
-        } catch (error) {
-          console.log(error);
-          webScraing(info + 1);
-        }
-      }
     }
-  );
+  });
 }
 async function addBook(bookInfo, info) {
   const add_author = await addAuthor(bookInfo.yazar).then(
@@ -163,4 +159,4 @@ async function addPublisher(publisherName) {
   }
 }
 
-webScraing(300);
+webScraing(300); // veri cekilen sitedeki baslangic id

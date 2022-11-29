@@ -49,9 +49,9 @@ def basla(info):
 
 
     wordIndex=[]
-    rightWordIndex=[]
+    
     newFindWord=[]
-    words=[]
+   
     image_url=''
 
     soup_data = BeautifulSoup(res.content, 'html.parser')
@@ -63,7 +63,7 @@ def basla(info):
  
     
         
-    #resimi kayit etme
+    #resim kayit etme
     try:
         for imgtag in soup_data.find_all("img",{'class':'img-fluid'}): #img taginda resmi url bulma
     #   print(imgtag['src'])
