@@ -7,6 +7,9 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
 const { request, response } = require("express");
+const dbOperationRouter = require("./routers/dbOperationRouter");
+const res = require("express/lib/response");
+const { route } = require("express/lib/application");
 var app = express();
 var router = express.Router();
 
@@ -15,6 +18,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use("/api", router);
 app.use("/api/bookImages", express.static("bookImages"));
+app.use("/qrcodes", express.static("qrcodes"));
 
 router.use((request, response, next) => {
   console.log("middleware");
@@ -28,6 +32,11 @@ router.route("/book").get((request, response) => {
     response.json(result[0]);
   });
 });
+router.route("/bookcase").get((req, res) => {
+  dboperations.getBookcase().then((result) => {
+    res.json(result[0]);
+  });
+});
 router.route("/").get((request, response) => {
   console.log("gelen sorgu " + request.query.search);
   dboperations.getSearch(request.query.search).then((result) => {
@@ -37,8 +46,21 @@ router.route("/").get((request, response) => {
 });
 router.route("/books/:id").get((request, response) => {
   dboperations.getBook(request.params.id).then((result) => {
-    //console.log(result);
+    console.log(request);
     response.json(result[0]);
+  });
+});
+router.route("/books/").get((request, response) => {
+  dboperations.getBookLocation(request.query).then((result) => {
+    console.log(request.query);
+    response.json(result[0]);
+  });
+});
+router.route("/qrcode").get((request, response) => {
+  dboperations.getQrcode(request.query).then((result) => {
+    try {
+      response.json(result[0]);
+    } catch {}
   });
 });
 router.route("/book").post((request, response) => {
@@ -92,6 +114,50 @@ router.route("/rentbook").post((req, res) => {
     console.log(result[0][0]);
     res.status(201).json(result[0]);
   });
+});
+router.route("/rentbook").patch((request, response) => {
+  const data = { ...request.body };
+  console.log(data);
+  dboperations.patchDeliverBook(data).then((result) => {
+    console.log(result);
+    response.status(200).json(result);
+  });
+});
+router.route("/rentbook/check").patch((request, response) => {
+  const data = { ...request.body };
+  console.log(data);
+  dboperations.patchCheckBookcase(data).then((result) => {
+    console.log(result);
+    response.status(200).json(result);
+  });
+});
+
+router.route("/book/fav").post((req, res) => {
+  const data = { ...req.body };
+  console.log(data);
+  dboperations.postAddFavBook(data).then((result) => {
+    console.log(result);
+    res.status(201).json(result);
+  });
+});
+router.route("/book/fav").delete((request, response) => {
+  const data = { ...request.headers };
+  console.log(data);
+  dboperations.deleteFavBook(data).then((result) => {
+    response.status(200).json(result[0]);
+  });
+});
+
+router.route("/category").get((req, res) => {
+  if (req.query.id) {
+    console.log(req.query);
+    dboperations.getCategoryBook(req.query).then((result) => {
+      res.status(200).json(result);
+    });
+  } else
+    dboperations.getCategory().then((result) => {
+      res.status(200).json(result[0]);
+    });
 });
 
 var port = process.env.Port || 8091;

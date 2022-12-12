@@ -1,6 +1,5 @@
 var config = require("../dbconfig");
 const sql = require("mssql");
-const register = require("./register");
 
 async function postMyBook(data) {
   try {

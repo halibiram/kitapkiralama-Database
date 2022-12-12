@@ -71,7 +71,7 @@ async function addBook(bookInfo, info) {
     const pool = await sql.connect(config);
 
     //await delayAFn(2000);
-    console.log("2 second resume");
+    //console.log("2 second resume");
 
     const insertBook = await pool
       .request()
