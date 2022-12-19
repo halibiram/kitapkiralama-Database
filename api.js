@@ -4,25 +4,48 @@ const dboperations = require("./routers/dbOperationRouter");
 var Books = require("./books");
 
 var express = require("express");
+const fileUpload = require("express-fileupload");
+
 var bodyParser = require("body-parser");
 var cors = require("cors");
-const { request, response } = require("express");
-const dbOperationRouter = require("./routers/dbOperationRouter");
-const res = require("express/lib/response");
-const { route } = require("express/lib/application");
+
 var app = express();
 var router = express.Router();
 
 app.use(bodyParser.urlencoded({ extends: true }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(
+  fileUpload({
+    limits: {
+      fileSize: 10000000, // 10Mb limit
+    },
+    abortOnLimit: true,
+  })
+);
 app.use("/api", router);
 app.use("/api/bookImages", express.static("bookImages"));
+app.use("/api/userPhoto", express.static("userPhoto"));
 app.use("/qrcodes", express.static("qrcodes"));
 
 router.use((request, response, next) => {
   console.log("middleware");
   next();
+});
+
+router.route("/upload").post((request, response) => {
+  console.log(request.files);
+  console.log(request.body);
+  const { image } = request.files;
+  if (!image) return response.statusCode(400);
+  //if (/^image/.test(image.mimetype)) return response.sendStatus(400); //guvenli yukleme
+  image.mv(__dirname + "/userPhoto/" + image.name);
+  dboperations
+    .changeProfilePhoto(image.name, request.body.userId)
+    .then((result) => {
+      console.log(result);
+      response.sendStatus(200);
+    });
 });
 
 router.route("/book").get((request, response) => {

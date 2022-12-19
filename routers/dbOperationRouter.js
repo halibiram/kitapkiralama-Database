@@ -20,6 +20,7 @@ const postAddFavBook = require("../dboperations/postAddFavBook");
 
 const patchDeliverBook = require("../dboperations/patchDeliverBook");
 const patchCheckBookcase = require("../dboperations/patchCheckBookcase");
+const changeProfilePhoto = require("../dboperations/changeProfilePhoto");
 
 const deleteFavBook = require("../dboperations/deleteFavBook");
 
@@ -46,6 +47,7 @@ module.exports = {
 
   patchDeliverBook: patchDeliverBook.patchDeliverBook,
   patchCheckBookcase: patchCheckBookcase.patchCheckBookcase,
+  changeProfilePhoto: changeProfilePhoto.changeProfilePhoto,
 
   deleteFavBook: deleteFavBook.deleteFavBook,
 };
